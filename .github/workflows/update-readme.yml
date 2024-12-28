@@ -1,0 +1,38 @@
+name: Update README.md
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # প্রতি দিন রাত 12টায় (UTC) স্ক্রিপ্ট চালাবে
+  workflow_dispatch:  # ম্যানুয়ালি চালানোর জন্য
+  push:
+    branches:
+      - main  # যখন main শাখায় কিছু পুশ হবে তখনও কাজ করবে
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'  # আপনার ব্যবহৃত Node.js সংস্করণ
+
+      - name: Install dependencies
+        run: |
+          npm install
+
+      - name: Run the update script
+        run: |
+          node updateReadme.js
+
+      - name: Commit and push updated README.md
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "Updated README.md with dynamic stats"
+          git push
